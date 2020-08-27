@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.example.firstappagain.database.Database
 import com.example.firstappagain.databinding.FragmentContactBinding
 
 class ContactFragment : Fragment() {
@@ -22,6 +24,16 @@ class ContactFragment : Fragment() {
             false
         )
         setHasOptionsMenu(true)
+
+        val application = requireNotNull(this.activity).application
+        val dataSource = Database.getInstance(application).databaseDao
+        val viewModelFactory = ContactViewModelFactory(dataSource, binding, application)
+        val contactViewModel =
+            ViewModelProvider(
+                this, viewModelFactory
+            ).get(ContactViewModel::class.java)
+        binding.contactViewModel = contactViewModel
+        binding.lifecycleOwner = this
         return binding.root
     }
 
